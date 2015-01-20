@@ -8,8 +8,16 @@
   \code{plotEstimates()} plots estimates along the frontier. 
 }
 \usage{
-plotEstimates(estimates.object, xlab = "Number of Observations Pruned",
-              ylab = "Estimate", main = "Effects Plot", ...)
+plotEstimates(estimates.object,
+         xlab = 'Number of Observations Pruned',
+         ylab = 'Estimate',
+         main = 'Effects Plot',
+         xlim = NULL,
+         ylim = NULL,
+         mod.dependence.col = rgb(255,0,0,127, maxColorValue=255),
+         mod.dependence.border.col = rgb(255,0,0,200, maxColorValue=255),
+         line.col = rgb(102,0,0,255, maxColorValue=255),
+         ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,13 +28,28 @@ plotEstimates(estimates.object, xlab = "Number of Observations Pruned",
     The label for the x-axis. Defaults to 'Number of Observations Pruned'.
   }
   \item{ylab}{
-    The label for the y-axis. Defaults to Estimate'.
+    The label for the y-axis. Defaults to 'Estimate'.
   }
   \item{main}{
     The main label. Defaults to 'Effects Plot'.
   }
+  \item{xlim}{
+    The x-axis limits. 
+  }
+  \item{ylim}{
+    The y-axis limits. 
+  }
   \item{\dots}{
     Additional arguments to be passed to \code{plot}.
+  }
+  \item{mod.dependence.col}{
+    The color to shade the model dependence region.
+  }
+  \item{mod.dependence.border.col}{
+    The model dependence region border color.
+  }
+  \item{line.col}{
+    The color of the line displaying point estimates.
   }
 }
 \details{
@@ -37,17 +60,28 @@ plotEstimates(estimates.object, xlab = "Number of Observations Pruned",
 \examples{
 data(lalonde)
 
-# set seed for sampling a small data set for this example
-set.seed(02139) 
-lalonde <- lalonde[c(which(lalonde$treat == 1),
-                     sample(which(lalonde$treat == 0), 500)), ]
-
 match.on <- colnames(lalonde)[!(colnames(lalonde) \%in\% c('re78', 'treat'))]
 my.frontier <- makeFrontier(dataset = lalonde,
                             treatment = 'treat',
                             outcome = 're78',
                             match.on = match.on)
-my.estimates <- estimateEffects(my.frontier, 're78 ~ treat',
-                                prop.estimated = .05)
+
+base.form <- as.formula('re78 ~ treat + age + education
+                         + black + hispanic + married +
+                         nodegree + re74 + re75')
+\dontrun{
+my.estimates <- estimateEffects(my.frontier,
+                                're78 ~ treat',
+                                mod.dependence.formula = base.form,
+                                continuous.vars = c('age', 'education', 're74', 're75'),
+                                prop.estimated = .1,
+                                means.as.cutpoints = TRUE)
+
 plotEstimates(my.estimates)
+}
+}
+\references{
+  King, Gary, Christopher Lucas, and Richard
+  Nielsen. "The Balance-Sample 
+  Size Frontier in Matching Methods for Causal Inference." (2015).
 }

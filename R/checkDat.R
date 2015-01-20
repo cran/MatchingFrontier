@@ -1,6 +1,6 @@
 checkDat <-
-function(dataset, treatment, outcome, match.on){
-    keep.columns <- c(treatment, outcome, match.on)
+function(dataset, treatment, outcome, match.on, keep.vars){
+    keep.columns <- unique(c(treatment, outcome, match.on, keep.vars))
    
     # Check if all the variables are in the data
     if(sum(!(keep.columns %in% colnames(dataset))) > 0){ 
@@ -21,11 +21,11 @@ function(dataset, treatment, outcome, match.on){
 
     # Check treatment
     if(sum(!(dataset[,treatment] %in% c(0,1))) != 0){
-        customStop("the treatment must be either 0/1 (integers) or TRUE/FALSE (logical).", 'makeFrontier()')
+        customStop('the treatment must be either 0/1 (integers) or "TRUE"/"FALSE" (logical).', 'makeFrontier()')
     }
     
     # Trim the dataset to the stuff we need
-    dataset <- dataset[c(treatment, outcome, match.on)]
+    dataset <- dataset[, keep.columns]
 
     # Check for missing values
     if(sum(is.na(dataset)) != 0){

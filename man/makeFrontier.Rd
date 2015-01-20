@@ -10,8 +10,9 @@
     effects along the balance - sample size frontier.
 }
 \usage{
-makeFrontier(dataset, treatment, outcome, match.on, QOI = "FSATT",
-             metric = "Mahal", ratio = "variable", breaks = NULL)
+makeFrontier(dataset, treatment, outcome, match.on, 
+             keep.vars = NULL, QOI = 'FSATT', metric = 'Mahal',
+             ratio = 'fixed', breaks = NULL)
 }
 \arguments{
   \item{dataset}{
@@ -26,6 +27,12 @@ makeFrontier(dataset, treatment, outcome, match.on, QOI = "FSATT",
   }
   \item{match.on}{
     A vector of colnames indicating which variables are to be matched on.
+  }
+  \item{keep.vars}{
+    A character vector of variable names that are not in treatment,
+    outcome, or 'match.on' but that the user would like to store
+    in the data, either for calculation of model depedence
+    intervals or for use in exported data sets. 
   }
   \item{QOI}{
     The quantity of interest to be estimated. By default, feasible
@@ -46,14 +53,14 @@ makeFrontier(dataset, treatment, outcome, match.on, QOI = "FSATT",
 \examples{
 data(lalonde)
 
-# set seed for sampling a small data set for this example
-set.seed(02139) 
-lalonde <- lalonde[c(which(lalonde$treat == 1),
-                     sample(which(lalonde$treat == 0), 500)), ]
-
 match.on <- colnames(lalonde)[!(colnames(lalonde) \%in\% c('re78', 'treat'))]
 my.frontier <- makeFrontier(dataset = lalonde,
                             treatment = 'treat',
                             outcome = 're78',
                             match.on = match.on)
+}
+\references{
+  King, Gary, Christopher Lucas, and Richard
+  Nielsen. "The Balance-Sample 
+  Size Frontier in Matching Methods for Causal Inference." (2015).
 }
